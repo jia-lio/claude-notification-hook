@@ -17,6 +17,8 @@ irm https://raw.githubusercontent.com/jia-lio/claude-notification-hook/main/inst
 - 커스텀 이미지 지원
 - 슬라이드 애니메이션
 
+> **참고:** 이 알림은 이미지만 표시되며, 텍스트 메시지는 포함되지 않습니다.
+
 ## 커스터마이징
 
 ### 이미지 변경

@@ -4,7 +4,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 # 이미지 경로
-$imagePath = "C:\Users\user\.claude\claudeImage.png"
+$imagePath = "$env:USERPROFILE\.claude\claudeImage.png"
 
 # 이미지 크기 가져오기
 $img = [System.Drawing.Image]::FromFile($imagePath)

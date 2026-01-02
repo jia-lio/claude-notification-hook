@@ -51,6 +51,16 @@ $settings = @{
                 )
             }
         )
+        SubagentStop = @(
+            @{
+                hooks = @(
+                    @{
+                        type = "command"
+                        command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
+                    }
+                )
+            }
+        )
     }
 }
 

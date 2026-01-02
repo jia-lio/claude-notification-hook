@@ -17,6 +17,7 @@ irm https://raw.githubusercontent.com/jia-lio/claude-notification-hook/main/inst
 ## 기능
 
 - 작업 완료 시 팝업 알림
+- 서브에이전트 완료 시 팝업 알림
 - 권한 요청 시 팝업 알림
 - 커스텀 이미지 지원
 - 슬라이드 애니메이션

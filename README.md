@@ -2,9 +2,13 @@
 
 Claude Code 작업 완료 및 권한 요청 시 커스텀 팝업 알림을 표시합니다.
 
+## 지원 환경
+
+- VSCode (Claude Code 확장)
+
 ## 설치
 
-PowerShell에서 실행:
+PowerShell에서 실행하거나, Claude Code에 아래 명령어를 입력하면 자동으로 설치됩니다:
 
 ```powershell
 irm https://raw.githubusercontent.com/jia-lio/claude-notification-hook/main/install.ps1 | iex

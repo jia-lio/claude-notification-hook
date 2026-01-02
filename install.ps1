@@ -12,13 +12,14 @@ if (!(Test-Path $claudeDir)) {
     Write-Host "Created $claudeDir" -ForegroundColor Green
 }
 
-# show-popup.ps1 다운로드
+# show-popup.ps1 다운로드 (UTF-8 인코딩)
 Write-Host "Downloading show-popup.ps1..." -ForegroundColor Yellow
-Invoke-WebRequest -Uri "$repoBase/show-popup.ps1" -OutFile "$claudeDir\show-popup.ps1"
+$scriptContent = (Invoke-WebRequest -Uri "$repoBase/show-popup.ps1" -UseBasicParsing).Content
+[System.IO.File]::WriteAllText("$claudeDir\show-popup.ps1", $scriptContent, [System.Text.Encoding]::UTF8)
 
 # 기본 이미지 다운로드
 Write-Host "Downloading default image..." -ForegroundColor Yellow
-Invoke-WebRequest -Uri "$repoBase/claudeImage.png" -OutFile "$claudeDir\claudeImage.png"
+Invoke-WebRequest -Uri "$repoBase/claudeImage.png" -OutFile "$claudeDir\claudeImage.png" -UseBasicParsing
 
 # settings.json 생성 (기존 파일이 있으면 백업)
 $settingsPath = "$claudeDir\settings.json"

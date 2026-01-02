@@ -14,6 +14,8 @@ PowerShell에서 실행하거나, Claude Code에 아래 명령어를 입력하�
 irm https://raw.githubusercontent.com/jia-lio/claude-notification-hook/main/install.ps1 | iex
 ```
 
+> **참고:** 설치 후 Claude Code를 재시작해야 적용됩니다.
+
 ## 기능
 
 - 작업 완료 시 팝업 알림

@@ -21,51 +21,72 @@ $scriptContent = (Invoke-WebRequest -Uri "$repoBase/show-popup.ps1" -UseBasicPar
 Write-Host "Downloading default image..." -ForegroundColor Yellow
 Invoke-WebRequest -Uri "$repoBase/claudeImage.png" -OutFile "$claudeDir\claudeImage.png" -UseBasicParsing
 
-# settings.json 생성 (기존 파일이 있으면 백업)
+# settings.json 머지 (기존 파일이 있으면 기존 설정 유지하면서 hooks 추가)
 $settingsPath = "$claudeDir\settings.json"
+
+# 추가할 hooks 정의
+$newHooks = @{
+    Stop = @(
+        @{
+            hooks = @(
+                @{
+                    type = "command"
+                    command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
+                }
+            )
+        }
+    )
+    Notification = @(
+        @{
+            hooks = @(
+                @{
+                    type = "command"
+                    command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
+                }
+            )
+        }
+    )
+    SubagentStop = @(
+        @{
+            hooks = @(
+                @{
+                    type = "command"
+                    command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
+                }
+            )
+        }
+    )
+}
+
 if (Test-Path $settingsPath) {
-    $backup = "$claudeDir\settings.backup.json"
-    Copy-Item $settingsPath $backup
-    Write-Host "Backed up existing settings to settings.backup.json" -ForegroundColor Yellow
-}
+    # 기존 settings.json 읽기
+    $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
 
-$settings = @{
-    hooks = @{
-        Stop = @(
-            @{
-                hooks = @(
-                    @{
-                        type = "command"
-                        command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
-                    }
-                )
-            }
-        )
-        Notification = @(
-            @{
-                hooks = @(
-                    @{
-                        type = "command"
-                        command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
-                    }
-                )
-            }
-        )
-        SubagentStop = @(
-            @{
-                hooks = @(
-                    @{
-                        type = "command"
-                        command = "powershell -ExecutionPolicy Bypass -File `"$claudeDir\show-popup.ps1`""
-                    }
-                )
-            }
-        )
+    # hooks 객체가 없으면 생성
+    if (-not $settings.hooks) {
+        $settings | Add-Member -NotePropertyName "hooks" -NotePropertyValue @{}
     }
-}
 
-$settings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
-Write-Host "Created settings.json" -ForegroundColor Green
+    # 각 hook 추가 (기존 hook이 없는 경우에만)
+    foreach ($hookName in $newHooks.Keys) {
+        if (-not $settings.hooks.$hookName) {
+            $settings.hooks | Add-Member -NotePropertyName $hookName -NotePropertyValue $newHooks[$hookName]
+            Write-Host "Added $hookName hook" -ForegroundColor Green
+        } else {
+            Write-Host "$hookName hook already exists, skipping" -ForegroundColor Yellow
+        }
+    }
+
+    $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
+    Write-Host "Merged hooks into existing settings.json" -ForegroundColor Green
+} else {
+    # 새 settings.json 생성
+    $settings = @{
+        hooks = $newHooks
+    }
+    $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
+    Write-Host "Created settings.json" -ForegroundColor Green
+}
 
 Write-Host "`nInstallation complete!" -ForegroundColor Green
 Write-Host "Restart Claude Code to apply changes." -ForegroundColor Cyan
